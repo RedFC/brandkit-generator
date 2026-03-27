@@ -1,0 +1,21 @@
+{
+  "name": "ai-brand-launch-studio",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Monorepo for AI Brand Launch Studio (Theme 1)",
+  "packageManager": "pnpm@9.12.2",
+  "scripts": {
+    "dev": "turbo run dev --parallel",
+    "dev:api": "pnpm --filter @studio/api dev",
+    "dev:web": "pnpm --filter @studio/web dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "typecheck": "turbo run typecheck",
+    "clean": "turbo run clean"
+  },
+  "devDependencies": {
+    "turbo": "^2.1.3",
+    "typescript": "^5.6.3"
+  }
+}

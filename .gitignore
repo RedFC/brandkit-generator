@@ -1,0 +1,13 @@
+node_modules
+.pnpm-store
+.env
+.env.*
+!.env.example
+**/node_modules
+**/dist
+**/build
+**/.angular
+**/coverage
+.DS_Store
+npm-debug.log*
+pnpm-debug.log*
