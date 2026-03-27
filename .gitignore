@@ -7,6 +7,8 @@ node_modules
 **/dist
 **/build
 **/.angular
+**/.turbo
+**/out-tsc
 **/coverage
 .DS_Store
 npm-debug.log*

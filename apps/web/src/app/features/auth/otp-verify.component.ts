@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { AuthFacadeService } from "../../core/services/auth-facade.service";
@@ -26,6 +26,8 @@ import { AuthFacadeService } from "../../core/services/auth-facade.service";
   `
 })
 export class OtpVerifyComponent {
+  private readonly fb = inject(FormBuilder);
+
   loading = false;
   error = "";
 
@@ -36,7 +38,6 @@ export class OtpVerifyComponent {
   });
 
   constructor(
-    private fb: FormBuilder,
     private auth: AuthFacadeService,
     private route: ActivatedRoute,
     private router: Router

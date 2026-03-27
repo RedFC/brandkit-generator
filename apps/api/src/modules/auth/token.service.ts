@@ -9,14 +9,16 @@ interface TokenPayload {
 
 class TokenService {
   createAccessToken(payload: TokenPayload): string {
+    const expiresIn = env.ACCESS_TOKEN_TTL as jwt.SignOptions["expiresIn"];
     return jwt.sign(payload, env.JWT_ACCESS_SECRET, {
-      expiresIn: env.ACCESS_TOKEN_TTL
+      expiresIn
     });
   }
 
   createRefreshToken(payload: TokenPayload): string {
+    const expiresIn = env.REFRESH_TOKEN_TTL as jwt.SignOptions["expiresIn"];
     return jwt.sign(payload, env.JWT_REFRESH_SECRET, {
-      expiresIn: env.REFRESH_TOKEN_TTL
+      expiresIn
     });
   }
 
