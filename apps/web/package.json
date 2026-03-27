@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "ng serve --host 0.0.0.0 --port 4200",
-    "build": "ng build",
+    "build": "tsc -p tsconfig.app.json",
     "typecheck": "tsc -p tsconfig.app.json --noEmit",
     "lint": "echo 'No lint configured for web yet'",
     "test": "echo 'No tests configured yet'",
@@ -28,6 +28,6 @@
     "@angular/cli": "^18.2.8",
     "@angular/compiler-cli": "^18.2.8",
     "@types/node": "^22.7.4",
-    "typescript": "^5.6.3"
+    "typescript": "5.5.4"
   }
 }
