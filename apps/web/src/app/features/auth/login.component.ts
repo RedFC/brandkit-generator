@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import { Router, RouterLink } from "@angular/router";
 import { AuthFacadeService } from "../../core/services/auth-facade.service";
@@ -22,6 +22,8 @@ import { AuthFacadeService } from "../../core/services/auth-facade.service";
   `
 })
 export class LoginComponent {
+  private readonly fb = inject(FormBuilder);
+
   loading = false;
   error = "";
 
@@ -30,7 +32,7 @@ export class LoginComponent {
     password: ["", [Validators.required]]
   });
 
-  constructor(private fb: FormBuilder, private auth: AuthFacadeService, private router: Router) {}
+  constructor(private auth: AuthFacadeService, private router: Router) {}
 
   submit(): void {
     if (this.form.invalid || this.loading) return;

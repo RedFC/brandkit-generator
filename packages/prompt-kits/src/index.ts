@@ -1,4 +1,13 @@
-import type { BrandBriefInput } from "@studio/contracts";
+interface BrandBriefInput {
+  projectName: string;
+  businessName: string;
+  niche: string;
+  targetAudience: string;
+  tone: string;
+  valueProposition: string;
+  channels: string[];
+  additionalContext?: string;
+}
 
 export const buildStarterKitPrompt = (brief: BrandBriefInput, twistText?: string): string => {
   return [

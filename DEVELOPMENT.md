@@ -44,9 +44,9 @@
 
 ## Local Validation Checklist
 
-1. `pnpm install`
-2. `pnpm compose:up`
-3. `pnpm dev`
+1. `npm install`
+2. `npm run compose:up`
+3. `npm run dev`
 4. API health check `GET /api/v1/health`
 5. Register -> OTP -> Login flow
 6. Create project -> generate all three output types

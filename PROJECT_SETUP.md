@@ -3,7 +3,7 @@
 ## Prerequisites
 
 1. Node.js 22+
-2. pnpm 9+
+2. npm 10+
 3. Docker + Docker Compose
 
 ## 1. Clone and Checkout
@@ -14,7 +14,7 @@
 
 ## 2. Install Dependencies
 
-1. `pnpm install`
+1. `npm install`
 
 ## 3. Environment Setup
 
@@ -24,7 +24,7 @@
 
 ## 4. Start Dependent Services
 
-1. `pnpm compose:up`
+1. `npm run compose:up`
 2. MongoDB runs on `localhost:27017`.
 3. Redis runs on `localhost:6379`.
 4. Mailhog SMTP runs on `localhost:1025`.
@@ -32,7 +32,7 @@
 
 ## 5. Start Applications
 
-1. `pnpm dev`
+1. `npm run dev`
 2. API starts at `http://localhost:8080`.
 3. Web app starts at `http://localhost:4200`.
 
@@ -46,11 +46,11 @@
 
 ## 7. Common Commands
 
-1. `pnpm dev:api`
-2. `pnpm dev:web`
-3. `pnpm build`
-4. `pnpm typecheck`
-5. `pnpm compose:down`
+1. `npm run dev:api`
+2. `npm run dev:web`
+3. `npm run build`
+4. `npm run typecheck`
+5. `npm run compose:down`
 
 ## 8. Troubleshooting
 

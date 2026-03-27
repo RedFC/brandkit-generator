@@ -52,13 +52,13 @@ The stack is intentionally split as:
 
 At root:
 
-1. `pnpm dev` runs both apps in parallel.
-2. `pnpm dev:api` runs API only.
-3. `pnpm dev:web` runs Angular only.
-4. `pnpm build` builds all packages/apps.
-5. `pnpm typecheck` type checks all workspaces.
-6. `pnpm compose:up` starts dependent services.
-7. `pnpm compose:down` stops dependent services.
+1. `npm run dev` runs both apps in parallel.
+2. `npm run dev:api` runs API only.
+3. `npm run dev:web` runs Angular only.
+4. `npm run build` builds all packages/apps.
+5. `npm run typecheck` type checks all workspaces.
+6. `npm run compose:up` starts dependent services.
+7. `npm run compose:down` stops dependent services.
 
 ## API Endpoints (high-level)
 

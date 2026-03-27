@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 import type { BrandProject } from "../../shared/models/project.models";
@@ -51,6 +51,8 @@ import { ProjectFacadeService } from "../../core/services/project-facade.service
   `
 })
 export class DashboardComponent implements OnInit {
+  private readonly fb = inject(FormBuilder);
+
   loading = false;
   error = "";
   projects: BrandProject[] = [];
@@ -66,7 +68,7 @@ export class DashboardComponent implements OnInit {
     additionalContext: [""]
   });
 
-  constructor(private fb: FormBuilder, private projectsApi: ProjectFacadeService, private router: Router) {}
+  constructor(private projectsApi: ProjectFacadeService, private router: Router) {}
 
   ngOnInit(): void {
     this.loadProjects();
