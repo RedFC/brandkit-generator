@@ -31,9 +31,9 @@
 
 1. API follows modular structure under `apps/api/src/modules`.
 2. Shared middleware and infrastructure singletons are in `apps/api/src/common` and `apps/api/src/infrastructure`.
-3. Keep domain and route logic separated.
-4. OTP and auth logic should remain consistent with security checks.
-5. Twist logic should stay isolated in `modules/twist`.
+3. **AI Provider Selection:** Handled dynamically via `generation.service.ts`. Use `MOCK_AI_MODE=true` to develop offline or avoid Gemini quotas.
+4. OTP and auth logic should remain consistent with security checks. Developer overrides (`OTP_BYPASS=true`) are available strictly for local validation.
+5. Twist logic should stay isolated in `modules/twist`, validating structured output formatting.
 
 ## Frontend Development Notes
 
