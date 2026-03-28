@@ -184,13 +184,7 @@ import { ProjectFacadeService } from "../../core/services/project-facade.service
                     <span class="muted" style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;">Image Prompt</span>
                     <p style="margin-top:4px;color:var(--text-secondary);font-size:13px;font-style:italic;line-height:1.6;">{{ dir.imagePrompt }}</p>
                   </div>
-                  <div style="margin-top:16px;">
-                    <span class="muted" style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em; margin-bottom: 8px; display: block;">AI Generated Concept</span>
-                    <img [src]="'https://gen.pollinations.ai/image/' + encodeUrl(dir.imagePrompt) + '?width=512&height=512&nologo=true&model=nanobanana&key=sk_YDU0VjRV1F60Pba6RuTgqsolJDSiLNj0'" 
-                         alt="Logo Concept Preview" 
-                         style="width:100%; max-width: 320px; height:auto; border-radius:12px; box-shadow: var(--shadow-sm); aspect-ratio: 1; object-fit: cover; background: rgba(255,255,255,0.02); border: 1px solid var(--border); display: block;" 
-                         loading="lazy" />
-                  </div>
+
                 </div>
               </div>
             </ng-container>
