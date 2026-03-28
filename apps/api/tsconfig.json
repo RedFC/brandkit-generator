@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "types": ["node"],
+    "lib": ["ES2022"],
+    "baseUrl": "../../",
+    "paths": {
+      "@/*": ["apps/api/src/*"],
+      "@studio/contracts": ["packages/contracts/src/index.ts"],
+      "@studio/prompt-kits": ["packages/prompt-kits/src/index.ts"],
+      "@studio/shared-utils": ["packages/shared-utils/src/index.ts"]
+    }
+  },
+  "include": ["src/**/*.ts"]
+}

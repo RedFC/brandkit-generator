@@ -1,0 +1,109 @@
+import type {
+  BrandBriefInput,
+  CampaignPackOutput,
+  LogoDirectionOutput,
+  StarterKitOutput
+} from "@studio/contracts";
+import {
+  buildCampaignPackPrompt,
+  buildLogoDirectionPrompt,
+  buildStarterKitPrompt
+} from "@studio/prompt-kits";
+import { createHash } from "node:crypto";
+import { env } from "../../config/env.js";
+import { logger } from "../../common/logger/logger.js";
+import type { AIProvider } from "../../infrastructure/ai/provider.js";
+import { MockAIProvider } from "../../infrastructure/ai/mock-ai.provider.js";
+import { GeminiAIProvider } from "../../infrastructure/ai/gemini-ai.provider.js";
+import { getRedis } from "../../infrastructure/cache/redis.js";
+import { twistService } from "../twist/twist.service.js";
+
+function createAIProvider(): AIProvider {
+  if (env.MOCK_AI_MODE) {
+    logger.info("[AI] Using MockAIProvider");
+    return new MockAIProvider();
+  }
+  logger.info("[AI] Using GeminiAIProvider");
+  return new GeminiAIProvider();
+}
+
+const aiProvider = createAIProvider();
+
+class GenerationService {
+  private hashPayload(prefix: string, payload: unknown): string {
+    return `${prefix}:${createHash("sha256").update(JSON.stringify(payload)).digest("hex")}`;
+  }
+
+  async generateStarterKit(brief: BrandBriefInput, feedback?: string): Promise<{ output: StarterKitOutput; prompt: string }> {
+    const redis = getRedis();
+    const activeRule = await twistService.getActiveRule();
+
+    // Skip cache when feedback is provided (re-generation)
+    if (!feedback) {
+      const cacheKey = this.hashPayload("gen:starter", { brief, activeRule });
+      const cached = await redis.get(cacheKey);
+      if (cached) {
+        return JSON.parse(cached) as { output: StarterKitOutput; prompt: string };
+      }
+    }
+
+    const prompt = buildStarterKitPrompt(brief, activeRule?.constraintText, feedback);
+    const output = await aiProvider.generateStarterKit(brief, activeRule?.constraintText, feedback);
+    const data = { output, prompt };
+
+    // Only cache non-feedback generations
+    if (!feedback) {
+      const cacheKey = this.hashPayload("gen:starter", { brief, activeRule });
+      await redis.set(cacheKey, JSON.stringify(data), { EX: 3600 });
+    }
+    return data;
+  }
+
+  async generateLogoDirection(brief: BrandBriefInput, feedback?: string): Promise<{ output: LogoDirectionOutput; prompt: string }> {
+    const redis = getRedis();
+    const activeRule = await twistService.getActiveRule();
+
+    if (!feedback) {
+      const cacheKey = this.hashPayload("gen:logo", { brief, activeRule });
+      const cached = await redis.get(cacheKey);
+      if (cached) {
+        return JSON.parse(cached) as { output: LogoDirectionOutput; prompt: string };
+      }
+    }
+
+    const prompt = buildLogoDirectionPrompt(brief, activeRule?.constraintText, feedback);
+    const output = await aiProvider.generateLogoDirection(brief, activeRule?.constraintText, feedback);
+    const data = { output, prompt };
+
+    if (!feedback) {
+      const cacheKey = this.hashPayload("gen:logo", { brief, activeRule });
+      await redis.set(cacheKey, JSON.stringify(data), { EX: 3600 });
+    }
+    return data;
+  }
+
+  async generateCampaignPack(brief: BrandBriefInput, feedback?: string): Promise<{ output: CampaignPackOutput; prompt: string }> {
+    const redis = getRedis();
+    const activeRule = await twistService.getActiveRule();
+
+    if (!feedback) {
+      const cacheKey = this.hashPayload("gen:campaign", { brief, activeRule });
+      const cached = await redis.get(cacheKey);
+      if (cached) {
+        return JSON.parse(cached) as { output: CampaignPackOutput; prompt: string };
+      }
+    }
+
+    const prompt = buildCampaignPackPrompt(brief, activeRule?.constraintText, feedback);
+    const output = await aiProvider.generateCampaignPack(brief, activeRule?.constraintText, feedback);
+    const data = { output, prompt };
+
+    if (!feedback) {
+      const cacheKey = this.hashPayload("gen:campaign", { brief, activeRule });
+      await redis.set(cacheKey, JSON.stringify(data), { EX: 3600 });
+    }
+    return data;
+  }
+}
+
+export const generationService = new GenerationService();
