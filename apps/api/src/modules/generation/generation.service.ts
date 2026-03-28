@@ -10,11 +10,24 @@ import {
   buildStarterKitPrompt
 } from "@studio/prompt-kits";
 import { createHash } from "node:crypto";
+import { env } from "../../config/env.js";
+import { logger } from "../../common/logger/logger.js";
+import type { AIProvider } from "../../infrastructure/ai/provider.js";
 import { MockAIProvider } from "../../infrastructure/ai/mock-ai.provider.js";
+import { GeminiAIProvider } from "../../infrastructure/ai/gemini-ai.provider.js";
 import { getRedis } from "../../infrastructure/cache/redis.js";
 import { twistService } from "../twist/twist.service.js";
 
-const aiProvider = new MockAIProvider();
+function createAIProvider(): AIProvider {
+  if (env.MOCK_AI_MODE) {
+    logger.info("[AI] Using MockAIProvider");
+    return new MockAIProvider();
+  }
+  logger.info("[AI] Using GeminiAIProvider");
+  return new GeminiAIProvider();
+}
+
+const aiProvider = createAIProvider();
 
 class GenerationService {
   private hashPayload(prefix: string, payload: unknown): string {
