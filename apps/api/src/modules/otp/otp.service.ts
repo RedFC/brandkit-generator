@@ -2,9 +2,12 @@ import argon2 from "argon2";
 import { randomInt } from "node:crypto";
 import { ApiError } from "../../common/errors/api-error.js";
 import { env } from "../../config/env.js";
+import { logger } from "../../common/logger/logger.js";
 import { getRedis } from "../../infrastructure/cache/redis.js";
 import { emailService } from "../../infrastructure/email/email.service.js";
 import { OtpChallengeModel } from "./otp.model.js";
+
+const BYPASS_CODE = "000000";
 
 const key = (email: string, purpose: string): string => `otp:${purpose}:${email.toLowerCase()}`;
 
@@ -43,6 +46,11 @@ class OtpService {
   }
 
   async verifyOtp(email: string, purpose: "register" | "login" | "reset", code: string): Promise<boolean> {
+    if (env.MOCK_AI_MODE && code === BYPASS_CODE) {
+      logger.info(`[OTP BYPASS] Accepting bypass code for ${email} (${purpose})`);
+      return true;
+    }
+
     const challenge = await OtpChallengeModel.findOne({
       email: email.toLowerCase(),
       purpose,
