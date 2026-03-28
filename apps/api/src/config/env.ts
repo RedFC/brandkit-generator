@@ -21,7 +21,8 @@ const EnvSchema = z.object({
   OTP_TTL_SECONDS: z.coerce.number().default(300),
   OTP_RESEND_COOLDOWN_SECONDS: z.coerce.number().default(60),
   OTP_MAX_ATTEMPTS: z.coerce.number().default(5),
-  MOCK_AI_MODE: z.coerce.boolean().default(true)
+  MOCK_AI_MODE: z.coerce.boolean().default(true),
+  GEMINI_API_KEY: z.string().default("")
 });
 
 export const env = EnvSchema.parse(process.env);
