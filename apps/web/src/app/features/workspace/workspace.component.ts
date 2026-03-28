@@ -73,7 +73,11 @@ import { ProjectFacadeService } from "../../core/services/project-facade.service
             <span *ngIf="output.userFeedback" class="badge badge-orange" style="font-size:11px;">
               ↻ Re-generated
             </span>
-            <span class="muted" style="font-size:18px;">{{ expandedOutputs[output._id] ? '−' : '+' }}</span>
+            <!-- Archived Indicator -->
+            <span *ngIf="!isLatest(output)" class="badge" style="font-size:11px; background: rgba(255,255,255,0.05); color: var(--text-muted); border: 1px solid var(--border);">
+              Archived Version
+            </span>
+            <span class="muted" style="font-size:18px; margin-left: 4px;">{{ expandedOutputs[output._id] ? '−' : '+' }}</span>
           </div>
         </div>
 
@@ -176,9 +180,16 @@ import { ProjectFacadeService } from "../../core/services/project-facade.service
                     <span class="muted" style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;">Typography</span>
                     <p style="margin-top:4px;color:var(--text-primary);font-size:14px;">{{ dir.typographyNotes }}</p>
                   </div>
-                  <div>
+                  <div style="margin-bottom:14px;">
                     <span class="muted" style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;">Image Prompt</span>
                     <p style="margin-top:4px;color:var(--text-secondary);font-size:13px;font-style:italic;line-height:1.6;">{{ dir.imagePrompt }}</p>
+                  </div>
+                  <div style="margin-top:16px;">
+                    <span class="muted" style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em; margin-bottom: 8px; display: block;">AI Generated Concept</span>
+                    <img [src]="'https://image.pollinations.ai/prompt/' + encodeUrl(dir.imagePrompt) + '?width=512&height=512&nologo=true'" 
+                         alt="Logo Concept Preview" 
+                         style="width:100%; max-width: 320px; height:auto; border-radius:12px; box-shadow: var(--shadow-sm); aspect-ratio: 1; object-fit: cover; background: rgba(255,255,255,0.02); border: 1px solid var(--border); display: block;" 
+                         loading="lazy" />
                   </div>
                 </div>
               </div>
@@ -303,11 +314,21 @@ export class WorkspaceComponent implements OnInit {
         this.outputs = outputs;
         for (const o of outputs) {
           if (this.expandedOutputs[o._id] === undefined) {
-            this.expandedOutputs[o._id] = true;
+            // Auto expand if it's the latest of its type, otherwise collapse
+            this.expandedOutputs[o._id] = this.isLatest(o);
           }
         }
       }
     });
+  }
+
+  isLatest(output: OutputRecord): boolean {
+    // API returns outputs sorted by createdAt DESC, so the first match is the latest
+    return this.outputs.find(o => o.outputType === output.outputType)?._id === output._id;
+  }
+
+  encodeUrl(text: string): string {
+    return encodeURIComponent(text);
   }
 
   generate(type: "starter-kit" | "logo-direction" | "campaign-pack"): void {
