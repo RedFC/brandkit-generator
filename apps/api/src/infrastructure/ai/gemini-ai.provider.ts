@@ -14,7 +14,7 @@ import { env } from "../../config/env.js";
 import { logger } from "../../common/logger/logger.js";
 import type { AIProvider } from "./provider.js";
 
-const MODEL_NAME = "gemini-2.0-flash";
+const MODEL_NAME = "gemini-2.5-flash";
 
 function extractJson(raw: string): string {
   const fenced = raw.match(/```(?:json)?\s*([\s\S]*?)```/);
