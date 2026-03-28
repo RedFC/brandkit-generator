@@ -8,16 +8,24 @@ import { AuthFacadeService } from "../../core/services/auth-facade.service";
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   template: `
-    <div class="card stack">
-      <h2>Login</h2>
-      <form class="stack" [formGroup]="form" (ngSubmit)="submit()">
-        <input type="email" placeholder="Email" formControlName="email" />
-        <input type="password" placeholder="Password" formControlName="password" />
-        <button class="btn-primary" [disabled]="loading || form.invalid">{{ loading ? 'Please wait...' : 'Login' }}</button>
-      </form>
-      <p class="error" *ngIf="error">{{ error }}</p>
-      <p><a routerLink="/forgot-password">Forgot password?</a></p>
-      <p>New here? <a routerLink="/register">Register</a></p>
+    <div class="auth-wrapper">
+      <div class="auth-card fade-in">
+        <h2 class="text-gradient">Welcome back</h2>
+        <p class="auth-subtitle">Sign in to your BrandKit account</p>
+        <form class="stack" [formGroup]="form" (ngSubmit)="submit()">
+          <input type="email" placeholder="Email address" formControlName="email" />
+          <input type="password" placeholder="Password" formControlName="password" />
+          <button class="btn-primary" [disabled]="loading || form.invalid">
+            <span class="spinner" *ngIf="loading"></span>
+            {{ loading ? '' : 'Sign In' }}
+          </button>
+        </form>
+        <p class="error" *ngIf="error">{{ error }}</p>
+        <div class="auth-footer">
+          <p><a routerLink="/forgot-password">Forgot password?</a></p>
+          <p style="margin-top:8px;">New here? <a routerLink="/register">Create account</a></p>
+        </div>
+      </div>
     </div>
   `
 })

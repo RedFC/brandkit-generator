@@ -9,18 +9,18 @@ import { AuthFacadeService } from "./core/services/auth-facade.service";
   imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive],
   template: `
     <div class="container">
-      <div class="nav card">
-        <div style="display:flex;gap:8px;align-items:center;">
-          <strong>BrandKit Generator</strong>
+      <nav class="nav">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="nav-logo">✦ BrandKit</span>
           <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
           <a routerLink="/history" routerLinkActive="active">History</a>
         </div>
-        <div style="display:flex;gap:8px;align-items:center;">
-          <span class="muted" *ngIf="auth.currentUserValue() as user">{{ user.email }}</span>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <span class="muted" *ngIf="auth.currentUserValue() as user" style="font-size:13px;">{{ user.email }}</span>
           <a routerLink="/login" routerLinkActive="active" *ngIf="!auth.isAuthenticatedValue()">Login</a>
-          <button class="btn-secondary" *ngIf="auth.isAuthenticatedValue()" (click)="logout()">Logout</button>
+          <button class="btn-secondary" style="padding:8px 16px;font-size:13px;" *ngIf="auth.isAuthenticatedValue()" (click)="logout()">Logout</button>
         </div>
-      </div>
+      </nav>
 
       <router-outlet></router-outlet>
     </div>

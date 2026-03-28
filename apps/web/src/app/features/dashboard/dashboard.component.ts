@@ -9,43 +9,88 @@ import { ProjectFacadeService } from "../../core/services/project-facade.service
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   template: `
-    <div class="stack">
+    <div class="stack fade-in">
+      <!-- Create Project -->
       <div class="card stack">
-        <h2>New Brand Project</h2>
+        <div>
+          <h2 class="text-gradient">New Brand Project</h2>
+          <p class="muted" style="margin-top:4px;">Fill in your brand brief to start generating</p>
+        </div>
         <form class="stack" [formGroup]="form" (ngSubmit)="createProject()">
           <div class="row">
-            <input placeholder="Project Name" formControlName="projectName" />
-            <input placeholder="Business Name" formControlName="businessName" />
+            <div class="stack" style="gap:6px;">
+              <label class="muted" style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;">Project Name</label>
+              <input placeholder="My Brand Project" formControlName="projectName" />
+            </div>
+            <div class="stack" style="gap:6px;">
+              <label class="muted" style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;">Business Name</label>
+              <input placeholder="Acme Inc." formControlName="businessName" />
+            </div>
           </div>
           <div class="row">
-            <input placeholder="Niche" formControlName="niche" />
-            <input placeholder="Target Audience" formControlName="targetAudience" />
+            <div class="stack" style="gap:6px;">
+              <label class="muted" style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;">Niche</label>
+              <input placeholder="e.g. Health & Fitness" formControlName="niche" />
+            </div>
+            <div class="stack" style="gap:6px;">
+              <label class="muted" style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;">Target Audience</label>
+              <input placeholder="e.g. Young professionals" formControlName="targetAudience" />
+            </div>
           </div>
           <div class="row">
-            <select formControlName="tone">
-              <option value="professional">professional</option>
-              <option value="playful">playful</option>
-              <option value="bold">bold</option>
-              <option value="minimal">minimal</option>
-              <option value="friendly">friendly</option>
-            </select>
-            <input placeholder="Channels (comma separated)" formControlName="channels" />
+            <div class="stack" style="gap:6px;">
+              <label class="muted" style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;">Tone</label>
+              <select formControlName="tone">
+                <option value="professional">Professional</option>
+                <option value="playful">Playful</option>
+                <option value="bold">Bold</option>
+                <option value="minimal">Minimal</option>
+                <option value="friendly">Friendly</option>
+              </select>
+            </div>
+            <div class="stack" style="gap:6px;">
+              <label class="muted" style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;">Channels</label>
+              <input placeholder="instagram, email, linkedin" formControlName="channels" />
+            </div>
           </div>
-          <textarea rows="4" placeholder="Value Proposition" formControlName="valueProposition"></textarea>
-          <textarea rows="3" placeholder="Additional Context" formControlName="additionalContext"></textarea>
-          <button class="btn-primary" [disabled]="loading || form.invalid">{{ loading ? 'Creating...' : 'Create Project' }}</button>
+          <div class="stack" style="gap:6px;">
+            <label class="muted" style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;">Value Proposition</label>
+            <textarea rows="3" placeholder="What makes your brand unique?" formControlName="valueProposition"></textarea>
+          </div>
+          <div class="stack" style="gap:6px;">
+            <label class="muted" style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;">Additional Context (optional)</label>
+            <textarea rows="2" placeholder="Any other details..." formControlName="additionalContext"></textarea>
+          </div>
+          <button class="btn-primary" [disabled]="loading || form.invalid">
+            <span class="spinner" *ngIf="loading"></span>
+            {{ loading ? '' : '✦ Create Project' }}
+          </button>
         </form>
         <p class="error" *ngIf="error">{{ error }}</p>
       </div>
 
+      <!-- Project List -->
       <div class="card stack">
-        <h2>Recent Projects</h2>
-        <button class="btn-secondary" (click)="loadProjects()">Refresh</button>
-        <div class="card" *ngFor="let project of projects">
-          <strong>{{ project.brief.projectName }}</strong>
-          <p class="muted">{{ project.brief.businessName }} | {{ project.brief.niche }}</p>
-          <button class="btn-primary" (click)="openWorkspace(project)">Open Workspace</button>
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <h2>Recent Projects</h2>
+          <button class="btn-secondary" style="padding:8px 14px;font-size:13px;" (click)="loadProjects()">Refresh</button>
         </div>
+        <div *ngFor="let project of projects"
+             class="card"
+             style="cursor:pointer;transition:all 0.2s;"
+             (click)="openWorkspace(project)">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+            <div>
+              <strong style="font-size:15px;">{{ project.brief.projectName }}</strong>
+              <p class="muted" style="margin-top:2px;">{{ project.brief.businessName }} · {{ project.brief.niche }}</p>
+            </div>
+            <div style="display:flex;gap:6px;align-items:center;">
+              <span class="badge badge-purple">{{ project.brief.tone }}</span>
+              <span style="color:var(--text-muted);font-size:20px;">→</span>
+            </div>
+          </div>
+        </div>
+        <p class="muted" *ngIf="!projects.length" style="text-align:center;padding:24px 0;">No projects yet. Create your first brand project above!</p>
       </div>
     </div>
   `

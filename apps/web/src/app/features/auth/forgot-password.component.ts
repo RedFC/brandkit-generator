@@ -8,15 +8,24 @@ import { AuthFacadeService } from "../../core/services/auth-facade.service";
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   template: `
-    <div class="card stack">
-      <h2>Forgot Password</h2>
-      <form class="stack" [formGroup]="form" (ngSubmit)="submit()">
-        <input type="email" placeholder="Email" formControlName="email" />
-        <button class="btn-primary" [disabled]="loading || form.invalid">{{ loading ? 'Please wait...' : 'Send OTP' }}</button>
-      </form>
-      <p class="error" *ngIf="error">{{ error }}</p>
-      <p class="muted" *ngIf="message">{{ message }}</p>
-      <p><a routerLink="/reset-password">Already have OTP? Reset password</a></p>
+    <div class="auth-wrapper">
+      <div class="auth-card fade-in">
+        <h2 class="text-gradient">Forgot password</h2>
+        <p class="auth-subtitle">We'll send a verification code to your email</p>
+        <form class="stack" [formGroup]="form" (ngSubmit)="submit()">
+          <input type="email" placeholder="Email address" formControlName="email" />
+          <button class="btn-primary" [disabled]="loading || form.invalid">
+            <span class="spinner" *ngIf="loading"></span>
+            {{ loading ? '' : 'Send Code' }}
+          </button>
+        </form>
+        <p class="error" *ngIf="error">{{ error }}</p>
+        <p class="success-msg" *ngIf="message">{{ message }}</p>
+        <div class="auth-footer">
+          <p><a routerLink="/reset-password">Already have a code? Reset password</a></p>
+          <p style="margin-top:8px;"><a routerLink="/login">Back to sign in</a></p>
+        </div>
+      </div>
     </div>
   `
 })
