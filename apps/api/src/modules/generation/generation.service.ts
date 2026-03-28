@@ -34,61 +34,74 @@ class GenerationService {
     return `${prefix}:${createHash("sha256").update(JSON.stringify(payload)).digest("hex")}`;
   }
 
-  async generateStarterKit(brief: BrandBriefInput): Promise<{ output: StarterKitOutput; prompt: string }> {
+  async generateStarterKit(brief: BrandBriefInput, feedback?: string): Promise<{ output: StarterKitOutput; prompt: string }> {
     const redis = getRedis();
     const activeRule = await twistService.getActiveRule();
-    const cacheKey = this.hashPayload("gen:starter", { brief, activeRule });
 
-    const cached = await redis.get(cacheKey);
-    if (cached) {
-      return JSON.parse(cached) as { output: StarterKitOutput; prompt: string };
+    // Skip cache when feedback is provided (re-generation)
+    if (!feedback) {
+      const cacheKey = this.hashPayload("gen:starter", { brief, activeRule });
+      const cached = await redis.get(cacheKey);
+      if (cached) {
+        return JSON.parse(cached) as { output: StarterKitOutput; prompt: string };
+      }
     }
 
-    const prompt = buildStarterKitPrompt(brief, activeRule?.constraintText);
-    const output = await aiProvider.generateStarterKit(brief, activeRule?.constraintText);
+    const prompt = buildStarterKitPrompt(brief, activeRule?.constraintText, feedback);
+    const output = await aiProvider.generateStarterKit(brief, activeRule?.constraintText, feedback);
     const data = { output, prompt };
 
-    await redis.set(cacheKey, JSON.stringify(data), { EX: 3600 });
+    // Only cache non-feedback generations
+    if (!feedback) {
+      const cacheKey = this.hashPayload("gen:starter", { brief, activeRule });
+      await redis.set(cacheKey, JSON.stringify(data), { EX: 3600 });
+    }
     return data;
   }
 
-  async generateLogoDirection(
-    brief: BrandBriefInput
-  ): Promise<{ output: LogoDirectionOutput; prompt: string }> {
+  async generateLogoDirection(brief: BrandBriefInput, feedback?: string): Promise<{ output: LogoDirectionOutput; prompt: string }> {
     const redis = getRedis();
     const activeRule = await twistService.getActiveRule();
-    const cacheKey = this.hashPayload("gen:logo", { brief, activeRule });
 
-    const cached = await redis.get(cacheKey);
-    if (cached) {
-      return JSON.parse(cached) as { output: LogoDirectionOutput; prompt: string };
+    if (!feedback) {
+      const cacheKey = this.hashPayload("gen:logo", { brief, activeRule });
+      const cached = await redis.get(cacheKey);
+      if (cached) {
+        return JSON.parse(cached) as { output: LogoDirectionOutput; prompt: string };
+      }
     }
 
-    const prompt = buildLogoDirectionPrompt(brief, activeRule?.constraintText);
-    const output = await aiProvider.generateLogoDirection(brief, activeRule?.constraintText);
+    const prompt = buildLogoDirectionPrompt(brief, activeRule?.constraintText, feedback);
+    const output = await aiProvider.generateLogoDirection(brief, activeRule?.constraintText, feedback);
     const data = { output, prompt };
 
-    await redis.set(cacheKey, JSON.stringify(data), { EX: 3600 });
+    if (!feedback) {
+      const cacheKey = this.hashPayload("gen:logo", { brief, activeRule });
+      await redis.set(cacheKey, JSON.stringify(data), { EX: 3600 });
+    }
     return data;
   }
 
-  async generateCampaignPack(
-    brief: BrandBriefInput
-  ): Promise<{ output: CampaignPackOutput; prompt: string }> {
+  async generateCampaignPack(brief: BrandBriefInput, feedback?: string): Promise<{ output: CampaignPackOutput; prompt: string }> {
     const redis = getRedis();
     const activeRule = await twistService.getActiveRule();
-    const cacheKey = this.hashPayload("gen:campaign", { brief, activeRule });
 
-    const cached = await redis.get(cacheKey);
-    if (cached) {
-      return JSON.parse(cached) as { output: CampaignPackOutput; prompt: string };
+    if (!feedback) {
+      const cacheKey = this.hashPayload("gen:campaign", { brief, activeRule });
+      const cached = await redis.get(cacheKey);
+      if (cached) {
+        return JSON.parse(cached) as { output: CampaignPackOutput; prompt: string };
+      }
     }
 
-    const prompt = buildCampaignPackPrompt(brief, activeRule?.constraintText);
-    const output = await aiProvider.generateCampaignPack(brief, activeRule?.constraintText);
+    const prompt = buildCampaignPackPrompt(brief, activeRule?.constraintText, feedback);
+    const output = await aiProvider.generateCampaignPack(brief, activeRule?.constraintText, feedback);
     const data = { output, prompt };
 
-    await redis.set(cacheKey, JSON.stringify(data), { EX: 3600 });
+    if (!feedback) {
+      const cacheKey = this.hashPayload("gen:campaign", { brief, activeRule });
+      await redis.set(cacheKey, JSON.stringify(data), { EX: 3600 });
+    }
     return data;
   }
 }

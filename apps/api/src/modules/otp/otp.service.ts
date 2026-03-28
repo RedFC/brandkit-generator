@@ -46,7 +46,7 @@ class OtpService {
   }
 
   async verifyOtp(email: string, purpose: "register" | "login" | "reset", code: string): Promise<boolean> {
-    if (env.MOCK_AI_MODE && code === BYPASS_CODE) {
+    if (env.OTP_BYPASS && code === BYPASS_CODE) {
       logger.info(`[OTP BYPASS] Accepting bypass code for ${email} (${purpose})`);
       return true;
     }

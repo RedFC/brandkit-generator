@@ -26,17 +26,17 @@ class ProjectsService {
     return project;
   }
 
-  async generate(userId: string, projectId: string, outputType: GenerationOutputType): Promise<any> {
+  async generate(userId: string, projectId: string, outputType: GenerationOutputType, feedback?: string): Promise<any> {
     const project = await this.getProject(userId, projectId);
     const brief = project.brief as BrandBriefInput;
 
     let generated: { output: unknown; prompt: string };
     if (outputType === "starter-kit") {
-      generated = await generationService.generateStarterKit(brief);
+      generated = await generationService.generateStarterKit(brief, feedback);
     } else if (outputType === "logo-direction") {
-      generated = await generationService.generateLogoDirection(brief);
+      generated = await generationService.generateLogoDirection(brief, feedback);
     } else {
-      generated = await generationService.generateCampaignPack(brief);
+      generated = await generationService.generateCampaignPack(brief, feedback);
     }
 
     const validation = await twistService.validateOutput(JSON.stringify(generated.output));
@@ -45,7 +45,8 @@ class ProjectsService {
       projectId,
       outputType,
       content: generated.output,
-      twistValidation: validation
+      twistValidation: validation,
+      userFeedback: feedback || undefined
     });
 
     return {
@@ -55,6 +56,7 @@ class ProjectsService {
       content: generated.output,
       prompt: generated.prompt,
       twistValidation: validation,
+      userFeedback: feedback || undefined,
       createdAt: record.createdAt
     };
   }

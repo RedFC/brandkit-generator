@@ -56,18 +56,18 @@ export class GeminiAIProvider implements AIProvider {
     }
   }
 
-  async generateStarterKit(brief: BrandBriefInput, twistText?: string): Promise<StarterKitOutput> {
-    const prompt = buildStarterKitPrompt(brief, twistText);
+  async generateStarterKit(brief: BrandBriefInput, twistText?: string, feedback?: string): Promise<StarterKitOutput> {
+    const prompt = buildStarterKitPrompt(brief, twistText, feedback);
     return this.generate<StarterKitOutput>(prompt, "starter-kit");
   }
 
-  async generateLogoDirection(brief: BrandBriefInput, twistText?: string): Promise<LogoDirectionOutput> {
-    const prompt = buildLogoDirectionPrompt(brief, twistText);
+  async generateLogoDirection(brief: BrandBriefInput, twistText?: string, feedback?: string): Promise<LogoDirectionOutput> {
+    const prompt = buildLogoDirectionPrompt(brief, twistText, feedback);
     return this.generate<LogoDirectionOutput>(prompt, "logo-direction");
   }
 
-  async generateCampaignPack(brief: BrandBriefInput, twistText?: string): Promise<CampaignPackOutput> {
-    const prompt = buildCampaignPackPrompt(brief, twistText);
+  async generateCampaignPack(brief: BrandBriefInput, twistText?: string, feedback?: string): Promise<CampaignPackOutput> {
+    const prompt = buildCampaignPackPrompt(brief, twistText, feedback);
     return this.generate<CampaignPackOutput>(prompt, "campaign-pack");
   }
 }

@@ -31,9 +31,9 @@ export class ProjectFacadeService {
       .pipe(map((response) => response.data.project));
   }
 
-  generate(projectId: string, outputType: "starter-kit" | "logo-direction" | "campaign-pack"): Observable<OutputRecord> {
+  generate(projectId: string, outputType: "starter-kit" | "logo-direction" | "campaign-pack", feedback?: string): Observable<OutputRecord> {
     return this.api
-      .post<ApiEnvelope<{ output: OutputRecord }>>(`/projects/${projectId}/generate/${outputType}`, {})
+      .post<ApiEnvelope<{ output: OutputRecord }>>(`/projects/${projectId}/generate/${outputType}`, { feedback })
       .pipe(map((response) => response.data.output));
   }
 

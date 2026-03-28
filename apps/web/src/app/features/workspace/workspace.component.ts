@@ -1,12 +1,13 @@
 import { CommonModule } from "@angular/common";
 import { Component, OnInit } from "@angular/core";
+import { FormsModule } from "@angular/forms";
 import { ActivatedRoute } from "@angular/router";
 import type { BrandProject, OutputRecord } from "../../shared/models/project.models";
 import { ProjectFacadeService } from "../../core/services/project-facade.service";
 
 @Component({
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   template: `
     <div class="stack fade-in" *ngIf="project">
       <!-- Project Header -->
@@ -57,14 +58,50 @@ import { ProjectFacadeService } from "../../core/services/project-facade.service
             <strong style="font-size:15px;">{{ formatType(output.outputType) }}</strong>
             <span class="muted" style="font-size:12px;">{{ output.createdAt | date:'medium' }}</span>
           </div>
-          <span class="muted" style="font-size:18px;">{{ expandedOutputs[output._id] ? '−' : '+' }}</span>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <!-- Confidence Score Badge -->
+            <span *ngIf="getConfidence(output.content) as conf"
+                  class="badge"
+                  [style.background]="getConfidenceColor(conf) + '22'"
+                  [style.color]="getConfidenceColor(conf)"
+                  [style.border]="'1px solid ' + getConfidenceColor(conf) + '33'"
+                  style="font-size:13px;padding:5px 12px;gap:6px;display:inline-flex;align-items:center;">
+              <span style="font-size:10px;">●</span>
+              {{ conf }}% match
+            </span>
+            <!-- User Feedback Indicator -->
+            <span *ngIf="output.userFeedback" class="badge badge-orange" style="font-size:11px;">
+              ↻ Re-generated
+            </span>
+            <span class="muted" style="font-size:18px;">{{ expandedOutputs[output._id] ? '−' : '+' }}</span>
+          </div>
         </div>
 
         <div class="output-body" *ngIf="expandedOutputs[output._id]">
+
+          <!-- ============ CONFIDENCE METER ============ -->
+          <div *ngIf="getConfidence(output.content) as conf" style="margin-bottom:20px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+              <span style="font-size:12px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.08em;font-weight:600;">Brand Voice Match</span>
+              <span style="font-size:20px;font-weight:700;" [style.color]="getConfidenceColor(conf)">{{ conf }}%</span>
+            </div>
+            <div style="width:100%;height:6px;border-radius:3px;background:rgba(255,255,255,0.06);overflow:hidden;">
+              <div [style.width.%]="conf"
+                   [style.background]="getConfidenceGradient(conf)"
+                   style="height:100%;border-radius:3px;transition:width 0.6s ease;">
+              </div>
+            </div>
+          </div>
+
+          <!-- ============ USER FEEDBACK (if re-generated) ============ -->
+          <div *ngIf="output.userFeedback" style="margin-bottom:16px;padding:12px 16px;border-radius:10px;background:rgba(249,115,22,0.06);border:1px solid rgba(249,115,22,0.12);">
+            <span style="font-size:11px;color:var(--accent-orange);text-transform:uppercase;letter-spacing:0.06em;font-weight:600;">User Feedback Applied</span>
+            <p style="margin-top:4px;color:var(--text-primary);font-size:14px;">"{{ output.userFeedback }}"</p>
+          </div>
+
           <!-- ==================== STARTER KIT ==================== -->
           <ng-container *ngIf="output.outputType === 'starter-kit'">
             <ng-container *ngIf="asStarterKit(output.content) as kit">
-              <!-- Brand Names -->
               <div style="margin-bottom:20px;">
                 <h3 style="margin-bottom:10px;color:var(--text-secondary);font-size:12px;text-transform:uppercase;letter-spacing:0.08em;">Brand Name Ideas</h3>
                 <div style="display:flex;gap:8px;flex-wrap:wrap;">
@@ -74,8 +111,6 @@ import { ProjectFacadeService } from "../../core/services/project-facade.service
                   </span>
                 </div>
               </div>
-
-              <!-- Taglines -->
               <div style="margin-bottom:20px;">
                 <h3 style="margin-bottom:10px;color:var(--text-secondary);font-size:12px;text-transform:uppercase;letter-spacing:0.08em;">Taglines</h3>
                 <div class="stack" style="gap:8px;">
@@ -85,16 +120,12 @@ import { ProjectFacadeService } from "../../core/services/project-facade.service
                   </div>
                 </div>
               </div>
-
-              <!-- Mission -->
               <div style="margin-bottom:20px;">
                 <h3 style="margin-bottom:10px;color:var(--text-secondary);font-size:12px;text-transform:uppercase;letter-spacing:0.08em;">Mission Statement</h3>
                 <div style="padding:16px 20px;background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.12);border-radius:12px;line-height:1.7;color:var(--text-primary);">
                   {{ kit.mission }}
                 </div>
               </div>
-
-              <!-- Voice Pillars -->
               <div style="margin-bottom:20px;">
                 <h3 style="margin-bottom:10px;color:var(--text-secondary);font-size:12px;text-transform:uppercase;letter-spacing:0.08em;">Voice Pillars</h3>
                 <div style="display:flex;gap:8px;flex-wrap:wrap;">
@@ -103,8 +134,6 @@ import { ProjectFacadeService } from "../../core/services/project-facade.service
                   </span>
                 </div>
               </div>
-
-              <!-- Social Bios -->
               <div>
                 <h3 style="margin-bottom:10px;color:var(--text-secondary);font-size:12px;text-transform:uppercase;letter-spacing:0.08em;">Social Media Bios</h3>
                 <div class="stack" style="gap:8px;">
@@ -128,16 +157,12 @@ import { ProjectFacadeService } from "../../core/services/project-facade.service
                     <h3 style="font-size:16px;">{{ dir.title }}</h3>
                     <span class="badge badge-purple">Direction {{ i + 1 }}</span>
                   </div>
-
-                  <!-- Style Keywords -->
                   <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;">
                     <span *ngFor="let kw of dir.styleKeywords"
                           style="padding:4px 10px;border-radius:6px;background:rgba(255,255,255,0.05);border:1px solid var(--border);font-size:12px;color:var(--text-secondary);">
                       {{ kw }}
                     </span>
                   </div>
-
-                  <!-- Color Palette -->
                   <div style="margin-bottom:14px;">
                     <span class="muted" style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;">Color Palette</span>
                     <div style="display:flex;gap:10px;margin-top:8px;align-items:center;">
@@ -147,14 +172,10 @@ import { ProjectFacadeService } from "../../core/services/project-facade.service
                       </div>
                     </div>
                   </div>
-
-                  <!-- Typography Notes -->
                   <div style="margin-bottom:14px;">
                     <span class="muted" style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;">Typography</span>
                     <p style="margin-top:4px;color:var(--text-primary);font-size:14px;">{{ dir.typographyNotes }}</p>
                   </div>
-
-                  <!-- Image Prompt -->
                   <div>
                     <span class="muted" style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;">Image Prompt</span>
                     <p style="margin-top:4px;color:var(--text-secondary);font-size:13px;font-style:italic;line-height:1.6;">{{ dir.imagePrompt }}</p>
@@ -167,7 +188,6 @@ import { ProjectFacadeService } from "../../core/services/project-facade.service
           <!-- ==================== CAMPAIGN PACK ==================== -->
           <ng-container *ngIf="output.outputType === 'campaign-pack'">
             <ng-container *ngIf="asCampaignPack(output.content) as campaign">
-              <!-- Hero Headlines -->
               <div style="margin-bottom:20px;">
                 <h3 style="margin-bottom:10px;color:var(--text-secondary);font-size:12px;text-transform:uppercase;letter-spacing:0.08em;">Hero Headlines</h3>
                 <div class="stack" style="gap:8px;">
@@ -177,8 +197,6 @@ import { ProjectFacadeService } from "../../core/services/project-facade.service
                   </div>
                 </div>
               </div>
-
-              <!-- Ad Copies -->
               <div style="margin-bottom:20px;">
                 <h3 style="margin-bottom:10px;color:var(--text-secondary);font-size:12px;text-transform:uppercase;letter-spacing:0.08em;">Ad Copy</h3>
                 <div class="stack" style="gap:8px;">
@@ -191,8 +209,6 @@ import { ProjectFacadeService } from "../../core/services/project-facade.service
                   </div>
                 </div>
               </div>
-
-              <!-- Email Subject Lines -->
               <div style="margin-bottom:20px;">
                 <h3 style="margin-bottom:10px;color:var(--text-secondary);font-size:12px;text-transform:uppercase;letter-spacing:0.08em;">Email Subject Lines</h3>
                 <div class="stack" style="gap:6px;">
@@ -203,8 +219,6 @@ import { ProjectFacadeService } from "../../core/services/project-facade.service
                   </div>
                 </div>
               </div>
-
-              <!-- CTAs -->
               <div>
                 <h3 style="margin-bottom:10px;color:var(--text-secondary);font-size:12px;text-transform:uppercase;letter-spacing:0.08em;">Call to Actions</h3>
                 <div style="display:flex;gap:8px;flex-wrap:wrap;">
@@ -217,11 +231,29 @@ import { ProjectFacadeService } from "../../core/services/project-facade.service
             </ng-container>
           </ng-container>
 
-          <!-- Twist Validation -->
-          <div *ngIf="output.twistValidation" style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border);">
-            <span class="badge" [class.badge-emerald]="output.twistValidation.passed" [class.badge-pink]="!output.twistValidation.passed">
-              Twist: {{ output.twistValidation.passed ? 'Passed ✓' : 'Failed ✗' }}
-            </span>
+          <!-- ============ REJECT & RE-GENERATE WITH FEEDBACK ============ -->
+          <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
+            <div *ngIf="!feedbackOpen[output._id]" style="display:flex;gap:8px;">
+              <button class="btn-secondary" (click)="openFeedback(output._id, output.outputType)" style="font-size:13px;padding:10px 16px;">
+                ✕ Reject & Re-generate
+              </button>
+            </div>
+            <div *ngIf="feedbackOpen[output._id]" class="stack fade-in" style="gap:10px;">
+              <span style="font-size:12px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.06em;font-weight:600;">What should the AI change?</span>
+              <textarea rows="3"
+                        placeholder="e.g. Make the tone more playful, use brighter colors, shorter taglines..."
+                        [(ngModel)]="feedbackText[output._id]"
+                        style="font-size:14px;"></textarea>
+              <div style="display:flex;gap:8px;">
+                <button class="btn-primary" style="font-size:13px;padding:10px 20px;"
+                        [disabled]="loading || !feedbackText[output._id]?.trim()"
+                        (click)="submitFeedback(output._id, output.outputType)">
+                  <span class="spinner" *ngIf="loading && regeneratingId === output._id"></span>
+                  {{ loading && regeneratingId === output._id ? '' : '↻ Re-generate with Feedback' }}
+                </button>
+                <button class="btn-secondary" style="font-size:13px;padding:10px 16px;" (click)="closeFeedback(output._id)">Cancel</button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -240,8 +272,11 @@ export class WorkspaceComponent implements OnInit {
   outputs: OutputRecord[] = [];
   loading = false;
   generating = "";
+  regeneratingId = "";
   error = "";
   expandedOutputs: Record<string, boolean> = {};
+  feedbackOpen: Record<string, boolean> = {};
+  feedbackText: Record<string, string> = {};
 
   constructor(private route: ActivatedRoute, private projectsApi: ProjectFacadeService) {}
 
@@ -266,7 +301,6 @@ export class WorkspaceComponent implements OnInit {
     this.projectsApi.outputs(this.projectId).subscribe({
       next: (outputs) => {
         this.outputs = outputs;
-        // Auto-expand first output of each type
         for (const o of outputs) {
           if (this.expandedOutputs[o._id] === undefined) {
             this.expandedOutputs[o._id] = true;
@@ -296,12 +330,60 @@ export class WorkspaceComponent implements OnInit {
     });
   }
 
+  openFeedback(outputId: string, outputType: string): void {
+    this.feedbackOpen[outputId] = true;
+    this.feedbackText[outputId] = "";
+  }
+
+  closeFeedback(outputId: string): void {
+    this.feedbackOpen[outputId] = false;
+  }
+
+  submitFeedback(outputId: string, outputType: "starter-kit" | "logo-direction" | "campaign-pack"): void {
+    const text = this.feedbackText[outputId]?.trim();
+    if (!text || this.loading) return;
+
+    this.loading = true;
+    this.regeneratingId = outputId;
+    this.error = "";
+
+    this.projectsApi.generate(this.projectId, outputType, text).subscribe({
+      next: () => {
+        this.loading = false;
+        this.regeneratingId = "";
+        this.feedbackOpen[outputId] = false;
+        this.reloadOutputs();
+      },
+      error: (err) => {
+        this.loading = false;
+        this.regeneratingId = "";
+        this.error = err?.error?.message ?? "Re-generation failed";
+      }
+    });
+  }
+
   toggleOutput(id: string): void {
     this.expandedOutputs[id] = !this.expandedOutputs[id];
   }
 
   formatType(type: string): string {
     return type.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+  }
+
+  getConfidence(content: any): number | null {
+    return content?.confidenceScore ?? null;
+  }
+
+  getConfidenceColor(score: number): string {
+    if (score >= 80) return "#22c55e";
+    if (score >= 60) return "#f97316";
+    return "#ef4444";
+  }
+
+  getConfidenceGradient(score: number): string {
+    if (score >= 80) return "linear-gradient(90deg, #22c55e, #10b981)";
+    if (score >= 60) return "linear-gradient(90deg, #f97316, #eab308)";
+    return "linear-gradient(90deg, #ef4444, #f97316)";
   }
 
   asStarterKit(content: unknown): any {

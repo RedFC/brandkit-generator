@@ -13,7 +13,8 @@ const BrandOutputSchema = new Schema(
       passed: { type: Boolean, default: true },
       appliedRuleVersion: { type: String, default: "" },
       evidence: [{ type: String }]
-    }
+    },
+    userFeedback: { type: String, default: "" }
   },
   {
     timestamps: true

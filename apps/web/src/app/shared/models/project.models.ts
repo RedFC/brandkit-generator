@@ -22,11 +22,12 @@ export interface OutputRecord {
   _id: string;
   projectId: string;
   outputType: "starter-kit" | "logo-direction" | "campaign-pack";
-  content: unknown;
+  content: any;
   twistValidation: {
     passed: boolean;
     appliedRuleVersion?: string;
     evidence: string[];
   };
+  userFeedback?: string;
   createdAt: string;
 }

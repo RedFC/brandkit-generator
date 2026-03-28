@@ -67,7 +67,8 @@ export const CreateProjectSchema = z.object({
 export type CreateProjectInput = z.infer<typeof CreateProjectSchema>;
 
 export const GenerateRequestSchema = z.object({
-  regenerate: z.boolean().optional().default(false)
+  regenerate: z.boolean().optional().default(false),
+  feedback: z.string().max(1000).optional()
 });
 export type GenerateRequestInput = z.infer<typeof GenerateRequestSchema>;
 
@@ -98,6 +99,7 @@ export interface StarterKitOutput {
   mission: string;
   voicePillars: string[];
   socialBios: string[];
+  confidenceScore?: number;
 }
 
 export interface LogoDirectionOutput {
@@ -108,6 +110,7 @@ export interface LogoDirectionOutput {
     typographyNotes: string;
     imagePrompt: string;
   }>;
+  confidenceScore?: number;
 }
 
 export interface CampaignPackOutput {
@@ -115,6 +118,7 @@ export interface CampaignPackOutput {
   adCopies: string[];
   emailSubjectLines: string[];
   ctas: string[];
+  confidenceScore?: number;
 }
 
 export type GenerationOutputType = "starter-kit" | "logo-direction" | "campaign-pack";

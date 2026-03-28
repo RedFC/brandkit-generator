@@ -1,12 +1,12 @@
 import type {
-  BrandBriefInput,
-  CampaignPackOutput,
+  StarterKitOutput,
   LogoDirectionOutput,
-  StarterKitOutput
+  CampaignPackOutput,
+  BrandBriefInput
 } from "@studio/contracts";
 
 export interface AIProvider {
-  generateStarterKit(brief: BrandBriefInput, twistText?: string): Promise<StarterKitOutput>;
-  generateLogoDirection(brief: BrandBriefInput, twistText?: string): Promise<LogoDirectionOutput>;
-  generateCampaignPack(brief: BrandBriefInput, twistText?: string): Promise<CampaignPackOutput>;
+  generateStarterKit(brief: BrandBriefInput, twistText?: string, feedback?: string): Promise<StarterKitOutput>;
+  generateLogoDirection(brief: BrandBriefInput, twistText?: string, feedback?: string): Promise<LogoDirectionOutput>;
+  generateCampaignPack(brief: BrandBriefInput, twistText?: string, feedback?: string): Promise<CampaignPackOutput>;
 }

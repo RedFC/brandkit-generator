@@ -21,20 +21,20 @@ class ProjectsController {
   }
 
   async generateStarterKit(req: Request, res: Response): Promise<Response> {
-    GenerateRequestSchema.parse(req.body ?? {});
-    const output = await projectsService.generate(req.user!.id, req.params.projectId, "starter-kit");
+    const parsed = GenerateRequestSchema.parse(req.body ?? {});
+    const output = await projectsService.generate(req.user!.id, req.params.projectId, "starter-kit", parsed.feedback);
     return created(res, "Starter kit generated", { output });
   }
 
   async generateLogoDirection(req: Request, res: Response): Promise<Response> {
-    GenerateRequestSchema.parse(req.body ?? {});
-    const output = await projectsService.generate(req.user!.id, req.params.projectId, "logo-direction");
+    const parsed = GenerateRequestSchema.parse(req.body ?? {});
+    const output = await projectsService.generate(req.user!.id, req.params.projectId, "logo-direction", parsed.feedback);
     return created(res, "Logo direction generated", { output });
   }
 
   async generateCampaignPack(req: Request, res: Response): Promise<Response> {
-    GenerateRequestSchema.parse(req.body ?? {});
-    const output = await projectsService.generate(req.user!.id, req.params.projectId, "campaign-pack");
+    const parsed = GenerateRequestSchema.parse(req.body ?? {});
+    const output = await projectsService.generate(req.user!.id, req.params.projectId, "campaign-pack", parsed.feedback);
     return created(res, "Campaign pack generated", { output });
   }
 
