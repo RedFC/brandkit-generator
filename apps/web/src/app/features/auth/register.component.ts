@@ -8,16 +8,24 @@ import { AuthFacadeService } from "../../core/services/auth-facade.service";
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   template: `
-    <div class="card stack">
-      <h2>Create account</h2>
-      <form class="stack" [formGroup]="form" (ngSubmit)="submit()">
-        <input placeholder="Full name" formControlName="fullName" />
-        <input type="email" placeholder="Email" formControlName="email" />
-        <input type="password" placeholder="Password" formControlName="password" />
-        <button class="btn-primary" [disabled]="loading || form.invalid">{{ loading ? 'Please wait...' : 'Register' }}</button>
-      </form>
-      <p class="error" *ngIf="error">{{ error }}</p>
-      <p>Already have account? <a routerLink="/login">Login</a></p>
+    <div class="auth-wrapper">
+      <div class="auth-card fade-in">
+        <h2 class="text-gradient">Create account</h2>
+        <p class="auth-subtitle">Start building your brand identity</p>
+        <form class="stack" [formGroup]="form" (ngSubmit)="submit()">
+          <input placeholder="Full name" formControlName="fullName" />
+          <input type="email" placeholder="Email address" formControlName="email" />
+          <input type="password" placeholder="Password (min 8 characters)" formControlName="password" />
+          <button class="btn-primary" [disabled]="loading || form.invalid">
+            <span class="spinner" *ngIf="loading"></span>
+            {{ loading ? '' : 'Create Account' }}
+          </button>
+        </form>
+        <p class="error" *ngIf="error">{{ error }}</p>
+        <div class="auth-footer">
+          <p>Already have an account? <a routerLink="/login">Sign in</a></p>
+        </div>
+      </div>
     </div>
   `
 })

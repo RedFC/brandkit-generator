@@ -8,20 +8,29 @@ import { AuthFacadeService } from "../../core/services/auth-facade.service";
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   template: `
-    <div class="card stack">
-      <h2>Verify OTP</h2>
-      <form class="stack" [formGroup]="form" (ngSubmit)="submit()">
-        <input type="email" placeholder="Email" formControlName="email" />
-        <select formControlName="purpose">
-          <option value="register">Register</option>
-          <option value="reset">Reset Password</option>
-          <option value="login">Login</option>
-        </select>
-        <input placeholder="6-digit OTP" formControlName="code" />
-        <button class="btn-primary" [disabled]="loading || form.invalid">{{ loading ? 'Please wait...' : 'Verify OTP' }}</button>
-      </form>
-      <p class="error" *ngIf="error">{{ error }}</p>
-      <p><a routerLink="/login">Go to login</a></p>
+    <div class="auth-wrapper">
+      <div class="auth-card fade-in">
+        <h2 class="text-gradient">Verify OTP</h2>
+        <p class="auth-subtitle">Enter the 6-digit code sent to your email</p>
+        <form class="stack" [formGroup]="form" (ngSubmit)="submit()">
+          <input type="email" placeholder="Email address" formControlName="email" />
+          <select formControlName="purpose">
+            <option value="register">Registration</option>
+            <option value="reset">Password Reset</option>
+            <option value="login">Login</option>
+          </select>
+          <input placeholder="000000" formControlName="code" maxlength="6"
+                 style="text-align:center;font-size:24px;letter-spacing:12px;font-weight:700;" />
+          <button class="btn-primary" [disabled]="loading || form.invalid">
+            <span class="spinner" *ngIf="loading"></span>
+            {{ loading ? '' : 'Verify Code' }}
+          </button>
+        </form>
+        <p class="error" *ngIf="error">{{ error }}</p>
+        <div class="auth-footer">
+          <p><a routerLink="/login">Back to sign in</a></p>
+        </div>
+      </div>
     </div>
   `
 })

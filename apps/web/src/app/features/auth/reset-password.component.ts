@@ -8,16 +8,24 @@ import { AuthFacadeService } from "../../core/services/auth-facade.service";
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   template: `
-    <div class="card stack">
-      <h2>Reset Password</h2>
-      <form class="stack" [formGroup]="form" (ngSubmit)="submit()">
-        <input type="email" placeholder="Email" formControlName="email" />
-        <input placeholder="6-digit OTP" formControlName="code" />
-        <input type="password" placeholder="New password" formControlName="newPassword" />
-        <button class="btn-primary" [disabled]="loading || form.invalid">{{ loading ? 'Please wait...' : 'Reset Password' }}</button>
-      </form>
-      <p class="error" *ngIf="error">{{ error }}</p>
-      <p><a routerLink="/login">Back to login</a></p>
+    <div class="auth-wrapper">
+      <div class="auth-card fade-in">
+        <h2 class="text-gradient">Reset password</h2>
+        <p class="auth-subtitle">Enter your OTP code and new password</p>
+        <form class="stack" [formGroup]="form" (ngSubmit)="submit()">
+          <input type="email" placeholder="Email address" formControlName="email" />
+          <input placeholder="6-digit OTP code" formControlName="code" maxlength="6" />
+          <input type="password" placeholder="New password (min 8 characters)" formControlName="newPassword" />
+          <button class="btn-primary" [disabled]="loading || form.invalid">
+            <span class="spinner" *ngIf="loading"></span>
+            {{ loading ? '' : 'Reset Password' }}
+          </button>
+        </form>
+        <p class="error" *ngIf="error">{{ error }}</p>
+        <div class="auth-footer">
+          <p><a routerLink="/login">Back to sign in</a></p>
+        </div>
+      </div>
     </div>
   `
 })
