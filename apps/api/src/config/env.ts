@@ -1,7 +1,25 @@
 import { config } from "dotenv";
 import { z } from "zod";
+import { resolve, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+import { existsSync } from "node:fs";
 
-config();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Try root monorepo .env first, then CWD
+const rootEnv = resolve(__dirname, "../../../../.env");
+if (existsSync(rootEnv)) {
+  config({ path: rootEnv, override: true });
+} else {
+  config();
+}
+
+const toBool = (val: unknown): boolean => {
+  if (typeof val === "boolean") return val;
+  if (typeof val === "string") return val.toLowerCase() !== "false" && val !== "0" && val !== "";
+  return Boolean(val);
+};
 
 const EnvSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
@@ -21,9 +39,9 @@ const EnvSchema = z.object({
   OTP_TTL_SECONDS: z.coerce.number().default(300),
   OTP_RESEND_COOLDOWN_SECONDS: z.coerce.number().default(60),
   OTP_MAX_ATTEMPTS: z.coerce.number().default(5),
-  MOCK_AI_MODE: z.coerce.boolean().default(true),
+  MOCK_AI_MODE: z.preprocess(toBool, z.boolean()).default(true),
   GEMINI_API_KEY: z.string().default(""),
-  OTP_BYPASS: z.coerce.boolean().default(false)
+  OTP_BYPASS: z.preprocess(toBool, z.boolean()).default(false)
 });
 
 export const env = EnvSchema.parse(process.env);
