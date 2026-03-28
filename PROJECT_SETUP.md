@@ -19,8 +19,10 @@
 ## 3. Environment Setup
 
 1. Copy root `.env.example` to `.env`.
-2. Update JWT secrets for your local environment.
-3. Keep `MONGO_URI` and `REDIS_URI` as default unless using custom ports.
+2. Map `GEMINI_API_KEY` to your valid Google generative API key. 
+3. (Optional) Set `MOCK_AI_MODE=true` if testing without Gemini access.
+4. (Optional) Set `OTP_BYPASS=true` for local development to bypass Mailhog OTP capturing.
+5. Keep `MONGO_URI` and `REDIS_URI` as default unless using custom ports.
 
 ## 4. Start Dependent Services
 

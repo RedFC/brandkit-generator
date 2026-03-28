@@ -36,17 +36,16 @@ The stack is intentionally split as:
 1. `feat/api-module` merged into `develop`.
 2. `feat/web-module` merged into `develop`.
 3. `feat/infra-module` merged into `develop`.
-4. `feat/docs-module` merged into `develop`.
+4. `feat/gemini-module` merged into `develop` (Gemini API Integration).
+5. `feat/ui-overhaul-module` merged into `develop` (Premium Dark Theme & Structured Outputs).
 
 ## Core Features
-
-1. Authentication with register, login, forgot password, reset password.
-2. OTP handling for registration and password reset.
-3. Project creation with structured brand brief.
-4. Generation endpoints for starter kit, logo direction, and campaign pack.
-5. Twist-ready rule layer (`/api/v1/twist/active`).
-6. Angular screens for login/register/forgot/reset/otp/dashboard/workspace/history.
-7. Docker Compose for MongoDB, Redis, and Mailhog.
+1. **Gemini AI Integration (`gemini-2.5-flash`)**: High-speed, context-aware brand intelligence generating names, taglines, visual concepts, and ad campaigns.
+2. **Human-in-the-Loop (HITL) Feedback**: "Reject & Re-generate" functionality allowing users to explicitly prompt changes on generated concepts.
+3. **Smart History & Archiving**: Regenerated assets neatly stack with "Archived Version" badges to preserve concept history.
+4. **Confidence Scoring**: Dynamic "Brand Voice Match" meters displaying the AI's confidence against the user's initial brand brief.
+5. **Premium Structured UI**: Angular interface utilizing a dark theme, glassmorphism, and structured visual cards instead of raw JSON.
+6. **Authentication & Bypass**: JWT auth, OTP flows, with a developer `OTP_BYPASS` flag for fast local testing.
 
 ## Available Scripts
 
